@@ -65,7 +65,7 @@ group by pageTitle
 order by NumUniqueVisitors desc
 
 Answer:
-pictures\QUESTION 3.png
+![](pictures\QUESTION_3.png)
 
 
 Question 4: find each unique product viewed by each visitor
@@ -78,7 +78,7 @@ order by fullvisitorid
 
 Answer:
 
-pictures\QUESTION_4.png
+![](pictures\QUESTION_4.png)
 
 
 
@@ -104,4 +104,4 @@ select
 
 Answer:
 
-pictures\QUESTION 5.png
+![](pictures\QUESTION_5.png)

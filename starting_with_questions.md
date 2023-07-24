@@ -17,7 +17,7 @@ LIMIT 1
 Answer:
 This script returns the country and city with the highest number of total transaction revenues,because the column was created as TEXT data type and cast was used to convert data type to numeric.
 
-pictures\Starting with questions 1.png
+![](pictures\Starting_with_questions_1.png)
 
 
 
@@ -39,7 +39,7 @@ Answer:
 
 The null values were eliminated for city and unit sold
 
-pictures\Starting with questions 2.png
+![](pictures\Starting_with_questions_2.png)
 
 
 
@@ -63,7 +63,7 @@ Answer:
 
 There was no recognizable pattern in the types (product categories) of products ordered from visitors in each city and country.
 
-pictures\Starting with questions 3.png
+![](pictures\Starting_with_questions_3.png)
 
 
 
@@ -86,7 +86,7 @@ Answer:
 
 There was no regonizable pattern worthy of noting in the product sold.
 
-pictures\Starting with questions 4.png
+![](pictures\Starting_with_questions_4.png)
 
 
 
@@ -117,4 +117,4 @@ Answer:
 
 The UNITED STATES had the highest number of revenue generated as it has 15 states generating revenue more than other countries.
 
-pictures\Starting with questions 5.png
+![](pictures\Starting_with_questions_5.png)
