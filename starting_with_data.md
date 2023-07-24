@@ -78,7 +78,7 @@ order by fullvisitorid
 
 Answer:
 
-pictures\QUESTION 4.png
+pictures\QUESTION_4.png
 
 
 
