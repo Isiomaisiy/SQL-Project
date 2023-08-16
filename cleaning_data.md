@@ -4,6 +4,9 @@
 
 Analysis on this table revealed that both the **city** and **country** fields have values which should not be in the table. In my opinion, these values should be replaced by null.
 
+![](/pictures/cleaning_data/1.png)
+
+
 
 Initial analysis done on the tables revealed that we had duplicates in both the analytics and all_sessions tables.
 
