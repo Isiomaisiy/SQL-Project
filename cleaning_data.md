@@ -1,13 +1,32 @@
-What issues will you address by cleaning the data?
+## What issues will you address by cleaning the data?
 
-The all_sessions and analytics tables has duplicates which can cause a bias in the results of my qury.
-Removing the duplicates was addressed by cleaning the data 
+### all_sessions
+
+Analysis on this table revealed that both the **city** and **country** fields have values which should not be in the table. In my opinion, these values should be replaced by null.
+
+
+Initial analysis done on the tables revealed that we had duplicates in both the analytics and all_sessions tables.
+
+The query used to arrive at this conclusion is shown here.
+
+```
+-- This shows the total count of the records in the queried table
+select count(1) from analytics
+
+-- This shows total count of distinct records in the queried table
+select count(1) from 
+(select distinct * from analytics) a
+```
+The idea is that if there are no duplicates, both counts should return the same result. But if there are duplicates in the table, the count will differ.
+
+My analysis also revealed that some of the tables had weird values in some of their columns.
+
 
 
 Queries:
 Below, provide the SQL queries you used to clean your data.
 
---This qury was used to get total rows in the table before cleaning.
+--This query was used to get total rows in the table before cleaning.
 select count(1) from analytics  --4301122
 
 
