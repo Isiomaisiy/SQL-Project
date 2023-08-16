@@ -1,46 +1,52 @@
-Question 1: find all duplicate records
+## Question 1: find all duplicate records
 
-SQL Queries: 
+#### Answer
+This query returns the count of duplicate records in the **analytics** table.
 
-select count(1) from analytics;  --4301122
+```
+-- This shows the total count of the records in the queried table
+select
+(select count(1) from analytics) as TotalCount,
+(select count(1) from 
+(select distinct * from analytics) a) as TotalDistinctCount
+```
 
-select count(1) from 
-(select distinct * from analytics) a  --1739308
+This query however gives the actual records that are duplicated.
 
--------------------------------------------------------------
+```
 with cte as (
 select 
 *,
 row_number() over(partition by visitNumber
-								,visitId
-								,visitStartTime
-								,analytics_date
-								,fullvisitorId
-								,userid
-								,channelGrouping
-								,socialEngagementType
-								,units_sold
-								,pageviews
-								,timeonsite
-								,bounces
-								,revenue
-								,unit_price) as rn
+				,visitId
+				,visitStartTime
+				,analytics_date
+				,fullvisitorId
+				,userid
+				,channelGrouping
+				,socialEngagementType
+				,units_sold
+				,pageviews
+				,timeonsite
+				,bounces
+				,revenue
+				,unit_price) as rn
 from analytics
 )
 
---select count(1) from cte
---where rn > 1
+select count(1) from cte
+where rn > 1
+```
 
-Answer: The analytics table has 2561814 records that are duplicates.
+## Question 2: find the total number of unique visitors (`fullVisitorID`)
 
+#### Answer
 
-
-Question 2: find the total number of unique visitors (`fullVisitorID`)
-
-SQL Queries:
+```
 select
 count (distinct fullvisitorid)
-from analytics 
+from analytics
+```
 
 Answer: 120018
 
