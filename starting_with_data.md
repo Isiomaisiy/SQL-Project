@@ -48,13 +48,16 @@ count (distinct fullvisitorid)
 from analytics
 ```
 
-Answer: 120018
+The screenshot of the result is seen here.
 
+![](/pictures/swd/1.png)
 
+## Question 3: find the total number of unique visitors by referring sites
 
-Question 3: find the total number of unique visitors by referring sites
+The assumption I made here is that visitors who have a **channelGrouping** of **Referal** are the ones in question.
 
-SQL Queries: 
+#### Answer
+```
 with cte as
 (
 select distinct
@@ -63,35 +66,35 @@ s.fullvisitorid
 from all_sessions s
 where s.channelGrouping = 'Referral'
 )
-
 select
 pageTitle, count(fullvisitorid) as NumUniqueVisitors
 from cte
 group by pageTitle
 order by NumUniqueVisitors desc
+```
+The screenshot of the result is shown here.
 
-Answer:
 ![](/pictures/QUESTION_3.png)
 
 
-Question 4: find each unique product viewed by each visitor
+## Question 4: find each unique product viewed by each visitor
 
-SQL Queries: 
+#### Answer
+```
 select
 distinct fullvisitorid, v2productName
 from all_sessions
 order by fullvisitorid
-
-Answer:
+```
+The screenshot of the result is shown here.
 
 ![](/pictures/QUESTION_4.png)
 
 
+## Question 5: compute the percentage of visitors to the site that actually makes a purchase
 
-Question 5: compute the percentage of visitors to the site that actually makes a purchase
-
-SQL Queries:
-
+####
+```
 with uniqueviewvisitors as
 (select 
 	count(distinct fullvisitorid) as count_viewvisitors
@@ -107,7 +110,7 @@ select
 	(select count_purchasevisitors from uniquepurchasevisitors) as TotalPurchaseVisitors,
 	--(select cast(count_purchasevisitors as numeric) from uniquepurchasevisitors)/(select cast(count_viewvisitors as numeric) from uniqueviewvisitors)*100
 	round(((select cast(count_purchasevisitors as numeric) from uniquepurchasevisitors)/(select cast(count_viewvisitors as numeric) from uniqueviewvisitors))::numeric,3)*100 as PctPurchaseVisitors
-
-Answer:
+```
+The result of the screenshot is shown here.
 
 ![](/pictures/QUESTION_5.png)
