@@ -1,54 +1,63 @@
-Question 1: find all duplicate records
+## Question 1: find all duplicate records
 
-SQL Queries: 
+#### Answer
+This query returns the count of duplicate records in the **analytics** table.
 
-select count(1) from analytics;  --4301122
+```
+-- This shows the total count of the records in the queried table
+select
+(select count(1) from analytics) as TotalCount,
+(select count(1) from 
+(select distinct * from analytics) a) as TotalDistinctCount
+```
 
-select count(1) from 
-(select distinct * from analytics) a  --1739308
+This query however gives the actual records that are duplicated.
 
--------------------------------------------------------------
+```
 with cte as (
 select 
 *,
 row_number() over(partition by visitNumber
-								,visitId
-								,visitStartTime
-								,analytics_date
-								,fullvisitorId
-								,userid
-								,channelGrouping
-								,socialEngagementType
-								,units_sold
-								,pageviews
-								,timeonsite
-								,bounces
-								,revenue
-								,unit_price) as rn
+				,visitId
+				,visitStartTime
+				,analytics_date
+				,fullvisitorId
+				,userid
+				,channelGrouping
+				,socialEngagementType
+				,units_sold
+				,pageviews
+				,timeonsite
+				,bounces
+				,revenue
+				,unit_price) as rn
 from analytics
 )
 
---select count(1) from cte
---where rn > 1
+select count(1) from cte
+where rn > 1
+```
 
-Answer: The analytics table has 2561814 records that are duplicates.
+## Question 2: find the total number of unique visitors (`fullVisitorID`)
 
+#### Answer
 
-
-Question 2: find the total number of unique visitors (`fullVisitorID`)
-
-SQL Queries:
+```
 select
 count (distinct fullvisitorid)
-from analytics 
+from analytics
+```
 
-Answer: 120018
+The screenshot of the result is seen here.
 
+![](/pictures/swd/1.png)
 
+## Question 3: find the total number of unique visitors by referring sites
 
-Question 3: find the total number of unique visitors by referring sites
+The assumption I made here is that visitors who have a **channelGrouping** of **Referal** are the ones in question.
 
-SQL Queries: 
+#### Answer
+```
 with cte as
 (
 select distinct
@@ -57,35 +66,35 @@ s.fullvisitorid
 from all_sessions s
 where s.channelGrouping = 'Referral'
 )
-
 select
 pageTitle, count(fullvisitorid) as NumUniqueVisitors
 from cte
 group by pageTitle
 order by NumUniqueVisitors desc
+```
+The screenshot of the result is shown here.
 
-Answer:
 ![](/pictures/QUESTION_3.png)
 
 
-Question 4: find each unique product viewed by each visitor
+## Question 4: find each unique product viewed by each visitor
 
-SQL Queries: 
+#### Answer
+```
 select
 distinct fullvisitorid, v2productName
 from all_sessions
 order by fullvisitorid
-
-Answer:
+```
+The screenshot of the result is shown here.
 
 ![](/pictures/QUESTION_4.png)
 
 
+## Question 5: compute the percentage of visitors to the site that actually makes a purchase
 
-Question 5: compute the percentage of visitors to the site that actually makes a purchase
-
-SQL Queries:
-
+####
+```
 with uniqueviewvisitors as
 (select 
 	count(distinct fullvisitorid) as count_viewvisitors
@@ -101,7 +110,7 @@ select
 	(select count_purchasevisitors from uniquepurchasevisitors) as TotalPurchaseVisitors,
 	--(select cast(count_purchasevisitors as numeric) from uniquepurchasevisitors)/(select cast(count_viewvisitors as numeric) from uniqueviewvisitors)*100
 	round(((select cast(count_purchasevisitors as numeric) from uniquepurchasevisitors)/(select cast(count_viewvisitors as numeric) from uniqueviewvisitors))::numeric,3)*100 as PctPurchaseVisitors
-
-Answer:
+```
+The result of the screenshot is shown here.
 
 ![](/pictures/QUESTION_5.png)

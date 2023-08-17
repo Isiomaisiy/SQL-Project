@@ -1,152 +1,107 @@
-What issues will you address by cleaning the data?
+## What issues will you address by cleaning the data?
 
-The all_sessions and analytics tables has duplicates which can cause a bias in the results of my qury.
-Removing the duplicates was addressed by cleaning the data 
+### all_sessions
+
+Analysis on this table revealed that both the **city** and **country** fields have values which should not be in the table. In my opinion, these values should be replaced by null.
+
+![](/pictures/cleaning_data/1.png)
+
+![](/pictures/cleaning_data/2.png)
+
+### analytics
+
+Initial analysis done on this table revealed that it has duplicates.
+
+The query used to arrive at this conclusion is shown here.
+
+```
+-- This shows the total count of the records in the queried table
+select
+(select count(1) from analytics) as TotalCount,
+(select count(1) from 
+(select distinct * from analytics) a) as TotalDistinctCount
+```
+The result of the query is shown here.
+
+![](/pictures/cleaning_data/3.png)
 
 
-Queries:
-Below, provide the SQL queries you used to clean your data.
-
---This qury was used to get total rows in the table before cleaning.
-select count(1) from analytics  --4301122
+The idea is that if there are no duplicates, both counts should return the same result. But if there are duplicates in the table, the count will differ as is the case here.
 
 
---This qury was used to get the total number of distinct rolls expected after cleaning.
-select count(1) from 
-(select distinct * from analytics) a  --1739308
+### Issues Addressed
 
---This qury was used to get the number of duplicates in the table
-with cte as (
-select 
-*,
-row_number() over(partition by visitNumber
-								,visitId
-								,visitStartTime
-								,analytics_date
-								,fullvisitorId
-								,userid
-								,channelGrouping
-								,socialEngagementType
-								,units_sold
-								,pageviews
-								,timeonsite
-								,bounces
-								,revenue
-								,unit_price) as rn
-from analytics
-)
+By cleaning the **all_sessions** table to replace the unnecessary values with **null**, it becomes intuitive that the values for those columns are not available.
 
---select count(1) from cte
---where rn > 1
+Also, by cleaning up the **analytics** table, we can avoid double-counting of records when we are trying to write scripts to gain insights into the data.
 
-The analytics table has 2561814 records that are duplicates.
 
---The below qury was used to create a new table of distinct values,
+## Clean-up Queries
+### Below, provide the SQL queries you used to clean your data.
 
+#### all_sessions
+
+To replace the **not available in demo dataset** and **(not set)** values in the **city** and **country** fields of the table, the folowing scripts are used.
+
+```
+-- For city
+update all_sessions
+set city = NULL
+where city like '%not%'
+
+-- For country
+update all_sessions
+set country = NULL
+where country like '%not%'
+
+```
+
+#### analytics
+
+The script here shows the count of records vs count of records expected after removing duplicates.
+
+```
+-- This shows the total count of the records in the queried table
+select
+(select count(1) from analytics) as TotalCount,
+(select count(1) from 
+(select distinct * from analytics) a) as TotalDistinctCount
+```
+
+The result of the query shows that we expect to have **1739308** distinct records after cleanup.
+
+To remove the duplicates, I created a temp table called **temp_analytics**, and I loaded the distinct values of the **analytics** table into it.
+This query helped me do that.
+
+```
 create table temp_analytics as
-select distinct on (visitNumber
-					,visitId
-					,visitStartTime
-					,analytics_date
-					,fullvisitorId
-					,userid
-					,channelGrouping
-					,socialEngagementType
-					,units_sold
-					,pageviews
-					,timeonsite
-					,bounces
-					,revenue
-					,unit_price) *
+select distinct on
+		(visitNumber
+		,visitId
+		,visitStartTime
+		,analytics_date
+		,fullvisitorId
+		,userid
+		,channelGrouping
+		,socialEngagementType
+		,units_sold
+		,pageviews
+		,timeonsite
+		,bounces
+		,revenue
+		,unit_price) *
 from analytics
+```
 
+Then I dropped the old **analytics** table and renamed the **temp_analytics** table to **analytics**.
+This script helped me to do that.
+
+```
 -- drop the old table, then rename the temp table to the old filename
 
 drop table analytics;
 alter table temp_analytics rename to analytics;
+```
+After cleanup, I reran the script to check for duplicates, and it now shows that there are no duplicates. The record count is equal to the expected record count.
 
-
-
---script to identify dulicates in all_sessions table
-
-
-with cte as (
-select 
-*,
-row_number() over(partition by fullVisitorId
-,channelGrouping
-,time
-,country
-,city
-,totalTransactionRevenue
-,transactions
-,timeOnSite
-,pageviews
-,sessionQualityDim
-,date
-,visitId
-,type
-,productRefundAmount
-,productQuantity
-,productPrice
-,productRevenue
-,productSKU
-,v2ProductName
-,v2ProductCategory
-,productVariant
-,currencyCode
-,itemQuantity
-,itemRevenue
-,transactionRevenue
-,transactionId
-,pageTitle
-,searchKeyword
-,pagePathLevel1
-,eCommerceAction_type
-,eCommerceAction_step
-,eCommerceAction_option) as rn
-from all_sessions
-)
-
--- select count(1) from cte
--- where rn > 1
-
-create table temp_all_sessions as
-select distinct on (fullVisitorId
-,channelGrouping
-,time
-,country
-,city
-,totalTransactionRevenue
-,transactions
-,timeOnSite
-,pageviews
-,sessionQualityDim
-,date
-,visitId
-,type
-,productRefundAmount
-,productQuantity
-,productPrice
-,productRevenue
-,productSKU
-,v2ProductName
-,v2ProductCategory
-,productVariant
-,currencyCode
-,itemQuantity
-,itemRevenue
-,transactionRevenue
-,transactionId
-,pageTitle
-,searchKeyword
-,pagePathLevel1
-,eCommerceAction_type
-,eCommerceAction_step
-,eCommerceAction_option) *
-from all_sessions
-
--- drop the old table, then rename the temp table to the old filename
-
-drop table all_sessions;
-alter table temp_all_sessions rename to all_sessions;
+![](/pictures/cleaning_data/4.png)
