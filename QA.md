@@ -20,3 +20,4 @@ select sku from products
 
 Here is the screensht of the result.
 
+![](/pictures/qa/1.png)
